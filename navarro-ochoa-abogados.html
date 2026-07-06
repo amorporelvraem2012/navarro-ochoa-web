@@ -14,9 +14,9 @@
     --surface:#152436;
     --surface-2:#1a2d40;
     --line:#1f3d5a;
-    --steel:#d3d5da;
-    --steel-mute:#8d8f97;
-    --steel-dim:#7b7f88;
+    --steel:#dce8f2;
+    --steel-mute:#c8d4e0;
+    --steel-dim:#a8bccf;
     --accent:#4f6b85;
     --accent-bright:#7fa0bd;
     --paper:#e9e7e0;
@@ -76,10 +76,10 @@
     font-size:12px;
     letter-spacing:.18em;
     text-transform:uppercase;
-    color:var(--accent-bright);
+    color:#f0c060;
   }
 
-  h1,h2,h3{font-family:var(--display);font-weight:600;color:#f2f1ee;}
+  h1,h2,h3{font-family:var(--display);font-weight:600;color:#ffffff;text-shadow:0 2px 18px rgba(180,130,40,0.25);}
 
   /* ---------- Nav ---------- */
   header{
@@ -134,12 +134,12 @@
   .navlinks a{
     font-size:13.5px;
     letter-spacing:.03em;
-    color:var(--steel-mute);
+    color:#c8dcea;
     position:relative;
     padding:4px 0;
     transition:color .2s ease;
   }
-  .navlinks a:hover{color:var(--steel);}
+  .navlinks a:hover{color:#ffffff;}
   .navlinks a::after{
     content:'';
     position:absolute;
@@ -170,7 +170,7 @@
     font-family:var(--mono);
     font-size:11px;
     letter-spacing:.04em;
-    color:var(--steel-dim) !important;
+    color:#b8cfe0 !important;
     border:1px solid var(--line);
     padding:7px 12px;
     border-radius:2px;
@@ -266,7 +266,7 @@
     max-width:680px;
   }
 
-  .hero h1{
+  .hero h1{text-shadow:0 2px 24px rgba(200,150,40,0.35), 0 1px 4px rgba(0,0,0,0.5);
     position:relative;
     z-index:1;
     font-size:clamp(44px,7vw,84px);
@@ -283,7 +283,7 @@
     position:relative;z-index:1;
     max-width:560px;
     margin:26px auto 0;
-    color:var(--steel-mute);
+    color:#e2eef7;
     font-size:17px;
     font-weight:300;
   }
@@ -319,15 +319,15 @@
   .btn-primary:hover{background:var(--accent-bright);}
   .btn-ghost{
     border:1px solid var(--line);
-    color:var(--steel-mute);
+    color:#c8dcea;
   }
   .btn-ghost:hover{border-color:var(--accent-bright);color:var(--steel);}
 
   /* ---------- Trust strip ---------- */
   .trust{
-    border-top:1px solid var(--line);
-    border-bottom:1px solid var(--line);
-    background:var(--surface);
+    border-top:1px solid rgba(255,255,255,0.15);
+    border-bottom:1px solid rgba(255,255,255,0.15);
+    background:#0a3254;
   }
   .trust .wrap{
     display:grid;
@@ -336,23 +336,23 @@
   }
   .trust .item{
     padding:30px 24px;
-    border-right:1px solid var(--line);
+    border-right:1px solid rgba(255,255,255,0.12);
     text-align:center;
   }
   .trust .item:last-child{border-right:none;}
   .trust .num{
     font-family:var(--display);
     font-size:32px;
-    color:#f2f1ee;
+    color:#ffffff;
     font-weight:600;
   }
-  .trust .num span{color:var(--accent-bright);}
+  .trust .num span{color:#f0c060;}
   .trust .label{
     margin-top:4px;
     font-size:11.5px;
     letter-spacing:.06em;
     text-transform:uppercase;
-    color:var(--steel-dim);
+    color:#a8d4f0;
     font-family:var(--mono);
   }
 
@@ -366,6 +366,7 @@
     font-size:clamp(30px,4vw,46px);
     margin-top:14px;
     line-height:1.1;
+    text-shadow:0 2px 16px rgba(180,130,40,0.20);
   }
   .section-head p{
     margin-top:18px;
@@ -375,42 +376,48 @@
   }
 
   /* ---------- Áreas / Artículos ---------- */
-  .areas{background:var(--ink);}
+  .areas{background:#c8dff0;}
+  .areas .eyebrow{color:#083a6e !important; font-weight:700;}
+  .areas .section-head h2{color:#071a30 !important; text-shadow:0 2px 12px rgba(180,130,40,0.18);}
+  .areas .section-head p{color:#0c2e4e !important; font-weight:500;}
+  .areas .section-head h2{color:#0a1f36 !important;}
+  .areas .section-head p{color:#0d2d4a !important; font-weight:500;}
+  .areas .eyebrow{color:#0a4a7a !important;}
   .articulos{
     display:grid;
     grid-template-columns:1fr;
-    border-top:1px solid var(--line);
+    border-top:1px solid #7aabcf;
   }
   .articulo{
     display:grid;
     grid-template-columns:200px 1fr;
     gap:40px;
     padding:38px 0;
-    border-bottom:1px solid var(--line);
+    border-bottom:1px solid #7aabcf;
     transition:background .25s ease;
   }
-  .articulo:hover{background:rgba(176,141,79,0.035);}
+  .articulo:hover{background:rgba(14,30,48,0.06);}
   .art-num{
     font-family:var(--mono);
     font-size:13px;
     letter-spacing:.06em;
-    color:var(--accent-bright);
+    color:#1a4f7a;
     padding-top:4px;
   }
   .art-num small{
     display:block;
-    color:var(--steel-dim);
+    color:#2e6a9e;
     margin-top:6px;
     font-size:11px;
   }
   .art-body h3{
     font-size:25px;
     font-weight:600;
-    color:#f2f1ee;
+    color:#0d2240;
     margin-bottom:10px;
   }
   .art-body p{
-    color:var(--steel-mute);
+    color:#1e3d5c;
     font-size:15.5px;
     max-width:620px;
   }
@@ -424,10 +431,11 @@
     font-family:var(--mono);
     font-size:10.5px;
     letter-spacing:.03em;
-    color:var(--steel-dim);
-    border:1px solid var(--line);
+    color:#1a4f7a;
+    border:1px solid #7aabcf;
     padding:5px 10px;
     border-radius:2px;
+    background:rgba(255,255,255,0.4);
   }
 
   /* ---------- Expediente / Enfoque ---------- */
@@ -787,9 +795,9 @@
       <div class="articulo reveal">
         <div class="art-num">ARTÍCULO I<small>Constitucional</small></div>
         <div class="art-body">
-          <h3>Derecho Constitucional y Compatibilidad de Función Pública</h3>
-          <p>Análisis y resolución de incompatibilidades bajo el Art. 92 de la Constitución, saneamiento societario previo a la asunción de cargos y blindaje jurídico para autoridades electas frente a impedimentos patrimoniales o contractuales.</p>
-          <div class="art-tags"><span>Art. 92 CP</span><span>Incompatibilidades</span><span>Transición de mando</span></div>
+          <h3>Derecho Constitucional y Función Pública</h3>
+          <p>Asesoría en compatibilidad de cargos, análisis de incompatibilidades constitucionales, saneamiento legal previo a la asunción de funciones públicas y protección jurídica de autoridades electas.</p>
+          <div class="art-tags"><span>Constitución</span><span>Incompatibilidades</span><span>Función pública</span></div>
         </div>
       </div>
 
@@ -797,17 +805,17 @@
         <div class="art-num">ARTÍCULO II<small>Contratación pública</small></div>
         <div class="art-body">
           <h3>Contratación Pública y Estatal</h3>
-          <p>Estructuración de propuestas técnicas y económicas, registro y regularización ante RNP/OECE, y representación en procedimientos de selección bajo la Ley N.º 32069 y su reglamento.</p>
-          <div class="art-tags"><span>Ley N.º 32069</span><span>SEACE / OSCE</span><span>RNP</span></div>
+          <p>Asesoría integral en procesos de selección, elaboración de propuestas técnicas y económicas, regularización ante registros oficiales y representación ante entidades del Estado.</p>
+          <div class="art-tags"><span>SEACE / OSCE</span><span>RNP</span><span>Procedimientos de selección</span></div>
         </div>
       </div>
 
       <div class="articulo reveal">
         <div class="art-num">ARTÍCULO III<small>Electoral</small></div>
         <div class="art-body">
-          <h3>Derecho Electoral y Personería Legal</h3>
-          <p>Acreditación de personeros, resolución de incompatibilidades entre roles electorales, y representación técnica ante los Jurados Electorales Especiales bajo el marco JNE/ONPE.</p>
-          <div class="art-tags"><span>JNE</span><span>ONPE</span><span>JEE</span></div>
+          <h3>Derecho Electoral</h3>
+          <p>Representación y acreditación ante organismos electorales, resolución de incompatibilidades en roles de campaña y defensa técnica ante instancias del sistema electoral peruano.</p>
+          <div class="art-tags"><span>JNE</span><span>ONPE</span><span>Organismos electorales</span></div>
         </div>
       </div>
 
@@ -815,8 +823,8 @@
         <div class="art-num">ARTÍCULO IV<small>Penal</small></div>
         <div class="art-body">
           <h3>Derecho Penal y Procesal Penal</h3>
-          <p>Seguimiento de investigaciones fiscales hasta su archivo definitivo, obtención de constancias oficiales y defensa técnica en procedimientos regidos por el Código Procesal Penal.</p>
-          <div class="art-tags"><span>CPP</span><span>Archivo fiscal</span><span>SGF</span></div>
+          <p>Defensa técnica en investigaciones fiscales, seguimiento de procedimientos penales, obtención de constancias y representación en todas las etapas del proceso penal.</p>
+          <div class="art-tags"><span>Defensa penal</span><span>Investigación fiscal</span><span>Proceso penal</span></div>
         </div>
       </div>
 
@@ -824,8 +832,8 @@
         <div class="art-num">ARTÍCULO V<small>Corporativo y parlamentario</small></div>
         <div class="art-body">
           <h3>Derecho Corporativo, Minero y Asesoría Parlamentaria</h3>
-          <p>Redacción y fortalecimiento de contratos societarios y de asociación en participación, junto con planes de trabajo legislativo, agendas normativas y cronogramas quinquenales para despachos congresales.</p>
-          <div class="art-tags"><span>Sociedades</span><span>Minería</span><span>Agenda legislativa</span></div>
+          <p>Asesoría en estructuración societaria, contratos empresariales y mineros, así como elaboración de instrumentos de gestión legislativa para despachos parlamentarios.</p>
+          <div class="art-tags"><span>Derecho societario</span><span>Minería</span><span>Gestión parlamentaria</span></div>
         </div>
       </div>
     </div>
@@ -928,7 +936,7 @@
           <dt>Correo</dt>
           <dd><a href="mailto:contacto@navarroochoa.pe">contacto@navarroochoa.pe</a></dd>
           <dt>Dr. Ochoa</dt>
-          <dd><a href="tel:+51990632014">+51 990 632 014</a></dd>
+          <dd><a href="https://wa.me/51990632014?text=Hola%2C%20me%20comunico%20desde%20la%20web%20de%20Navarro%20%26%20Ochoa%20Abogados.%20Quisiera%20agendar%20una%20consulta." target="_blank" rel="noopener" style="color:var(--accent-bright);">+51 990 632 014 · WhatsApp</a></dd>
           <dt>Dr. Navarro</dt>
           <dd>Próximamente</dd>
           <dt>Horario</dt>
@@ -960,11 +968,15 @@
         <div style="margin-top:28px;">
           <p class="eyebrow" style="margin-bottom:14px;">Plataformas de consulta</p>
           <div style="display:flex;flex-direction:column;gap:8px;">
+            <a href="https://spij.minjus.gob.pe/" target="_blank" rel="noopener"
+               style="font-size:12.5px;color:var(--steel-mute);padding:7px 12px;border:1px solid var(--line);border-radius:2px;transition:color .2s,border-color .2s;"
+               onmouseover="this.style.color='#7fa0bd';this.style.borderColor='#7fa0bd';"
+               onmouseout="this.style.color='';this.style.borderColor='';">📚 SPIJ — Sistema Peruano de Información Jurídica</a>
             <a href="https://cej.pj.gob.pe/cej/forms/busquedaform.html" target="_blank" rel="noopener"
                style="font-size:12.5px;color:var(--steel-mute);padding:7px 12px;border:1px solid var(--line);border-radius:2px;transition:color .2s,border-color .2s;"
                onmouseover="this.style.color='#7fa0bd';this.style.borderColor='#7fa0bd';"
                onmouseout="this.style.color='';this.style.borderColor='';">⚖️ Poder Judicial — Consulta de expedientes</a>
-            <a href="https://www.fiscaliadelnacion.gob.pe/carpeta-fiscal/" target="_blank" rel="noopener"
+            <a href="https://portal.mpfn.gob.pe/consultaCiudadana/" target="_blank" rel="noopener"
                style="font-size:12.5px;color:var(--steel-mute);padding:7px 12px;border:1px solid var(--line);border-radius:2px;transition:color .2s,border-color .2s;"
                onmouseover="this.style.color='#7fa0bd';this.style.borderColor='#7fa0bd';"
                onmouseout="this.style.color='';this.style.borderColor='';">🔍 Ministerio Público — Carpeta Fiscal</a>
@@ -1027,6 +1039,22 @@
     <div class="footer-legal">© 2026 Navarro &amp; Ochoa Abogados · Lima, Perú · Todos los derechos reservados · <a href="?vista=interno" target="_blank" rel="noopener" style="color:inherit;text-decoration:underline;">Acceso interno</a></div>
   </div>
 </footer>
+
+<!-- WHATSAPP FLOTANTE -->
+<a href="https://wa.me/51990632014?text=Hola%2C%20me%20comunico%20desde%20la%20web%20de%20Navarro%20%26%20Ochoa%20Abogados.%20Quisiera%20recibir%20orientaci%C3%B3n%20legal%20sobre%20mi%20caso." 
+   target="_blank" rel="noopener"
+   style="position:fixed;bottom:28px;right:28px;z-index:9999;
+          width:60px;height:60px;border-radius:50%;
+          background:#25d366;display:flex;align-items:center;justify-content:center;
+          box-shadow:0 4px 20px rgba(37,211,102,0.5);
+          transition:transform .2s,box-shadow .2s;"
+   onmouseover="this.style.transform='scale(1.1)';this.style.boxShadow='0 6px 28px rgba(37,211,102,0.7)';"
+   onmouseout="this.style.transform='';this.style.boxShadow='0 4px 20px rgba(37,211,102,0.5)';"
+   title="Escríbenos por WhatsApp">
+  <svg width="32" height="32" viewBox="0 0 24 24" fill="white">
+    <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+  </svg>
+</a>
 
 <script>
   // Header background on scroll
