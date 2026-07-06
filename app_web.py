@@ -1,6 +1,6 @@
 # app_web.py
 """
-Navarro & Ochoa Abogados — Sistema Interno de Redacción Judicial
+Navarro & Ochoa Abogados — Formateador de Escritos y Documentos
 ------------------------------------------------------------------
 streamlit run app_web.py
 
@@ -12,6 +12,14 @@ Dependencias de sistema (fuera de Python, necesarias para el OCR):
       Windows: instalador oficial. Linux: sudo apt install tesseract-ocr tesseract-ocr-spa
     - Poppler            (necesario para leer PDFs con pdf2image)
       Windows: https://github.com/oschwartz10612/poppler-windows  Linux: sudo apt install poppler-utils
+
+Alcance de esta herramienta:
+    Este sistema NO redacta argumentos legales ni analiza casos. Es un
+    FORMATEADOR: toma el texto que tú escribes (hechos, petitorio,
+    fundamentos de derecho) y lo organiza en un documento Word con el
+    formato, numeración y márgenes de un escrito judicial. El contenido
+    jurídico de fondo debe ser redactado por un abogado antes de
+    ingresarlo aquí.
 
 Nota legal importante:
     El código QR que se agrega a cada escrito es un CONTROL INTERNO DE
@@ -34,7 +42,7 @@ import streamlit as st
 import streamlit.components.v1 as components
 from docx import Document
 from docx.enum.text import WD_ALIGN_PARAGRAPH
-from docx.shared import Inches, Pt
+from docx.shared import Cm, Inches, Pt
 from PIL import Image
 
 import qrcode
@@ -59,6 +67,13 @@ BASE_DIR = Path(__file__).parent
 DOCS_DIR = BASE_DIR / "documentos_generados"
 CASOS_PATH = BASE_DIR / "casos.json"
 SITIO_HTML_PATH = BASE_DIR / "navarro-ochoa-abogados.html"
+
+# Buscar el archivo HTML aunque tenga número en el nombre
+if not SITIO_HTML_PATH.exists():
+    import glob
+    htmls = sorted(glob.glob(str(BASE_DIR / "navarro-ochoa-abogados*.html")))
+    if htmls:
+        SITIO_HTML_PATH = Path(htmls[-1])  # toma el más reciente
 DOCS_DIR.mkdir(exist_ok=True)
 
 # Clave de acceso al sistema interno. Cámbiala antes de usar en producción,
@@ -163,9 +178,56 @@ def generar_imagen_qr(codigo: str) -> io.BytesIO:
 def generar_escrito_docx(datos: dict, codigo: str, qr_buffer: io.BytesIO) -> io.BytesIO:
     doc = Document()
 
+    # Márgenes estándar de escrito judicial peruano
+    seccion = doc.sections[0]
+    seccion.left_margin = Cm(3)
+    seccion.right_margin = Cm(2.5)
+    seccion.top_margin = Cm(2.5)
+    seccion.bottom_margin = Cm(2.5)
+
     style = doc.styles["Normal"]
     style.font.name = "Times New Roman"
     style.font.size = Pt(12)
+    style.paragraph_format.line_spacing = 1.5
+    style.paragraph_format.space_after = Pt(6)
+
+    # --------- ENCABEZADO CON LOGO ---------
+    # Intentar cargar el logo desde archivo local
+    logo_path = BASE_DIR / "logo-clean.jpg"
+    header_section = seccion.header
+    header_para = header_section.paragraphs[0]
+    header_para.alignment = WD_ALIGN_PARAGRAPH.CENTER
+    header_para.paragraph_format.space_after = Pt(4)
+
+    try:
+        if logo_path.exists():
+            run_logo = header_para.add_run()
+            run_logo.add_picture(str(logo_path), width=Cm(2.2))
+    except Exception:
+        pass
+
+    run_nombre = header_para.add_run("  NAVARRO & OCHOA ABOGADOS")
+    run_nombre.bold = True
+    run_nombre.font.size = Pt(13)
+    run_nombre.font.name = "Times New Roman"
+
+    run_datos = header_para.add_run("\nEstudio Jurídico · Lima, Perú · +51 990 632 014")
+    run_datos.font.size = Pt(8)
+    run_datos.font.name = "Times New Roman"
+
+    # Línea separadora en el encabezado
+    from docx.oxml.ns import qn
+    from docx.oxml import OxmlElement
+    pPr = header_para._p.get_or_add_pPr()
+    pBdr = OxmlElement('w:pBdr')
+    bottom = OxmlElement('w:bottom')
+    bottom.set(qn('w:val'), 'single')
+    bottom.set(qn('w:sz'), '6')
+    bottom.set(qn('w:space'), '4')
+    bottom.set(qn('w:color'), '1a4a7a')
+    pBdr.append(bottom)
+    pPr.append(pBdr)
+    # --------- FIN ENCABEZADO ---------
 
     encabezado_juez = JUEZ_POR_TIPO.get(
         datos["tipo"], "SEÑOR(A) JUEZ / AUTORIDAD COMPETENTE"
@@ -174,13 +236,26 @@ def generar_escrito_docx(datos: dict, codigo: str, qr_buffer: io.BytesIO) -> io.
         datos["tipo"], datos["tipo"].replace("_", " ").upper()
     )
 
-    p = doc.add_paragraph(encabezado_juez)
-    p.alignment = WD_ALIGN_PARAGRAPH.CENTER
-    p.runs[0].bold = True
+    # --------- Encabezado (sumilla) ---------
+    sumilla = doc.add_paragraph()
+    sumilla.alignment = WD_ALIGN_PARAGRAPH.RIGHT
+    r = sumilla.add_run(f"EXPEDIENTE N.° {codigo}\nSUMILLA: {titulo_proceso}")
+    r.bold = True
+    r.font.size = Pt(10)
 
     doc.add_paragraph()
 
+    p = doc.add_paragraph()
+    p.alignment = WD_ALIGN_PARAGRAPH.LEFT
+    run_juez = p.add_run(encabezado_juez)
+    run_juez.bold = True
+    run_juez.underline = True
+
+    doc.add_paragraph()
+
+    # --------- Datos de las partes ---------
     tabla = doc.add_table(rows=0, cols=2)
+    tabla.style = "Table Grid"
     tabla.autofit = True
     filas = [
         ("Materia", titulo_proceso),
@@ -188,58 +263,116 @@ def generar_escrito_docx(datos: dict, codigo: str, qr_buffer: io.BytesIO) -> io.
         ("Demandado", datos["demandado"]),
         ("Abogado patrocinante", datos["abogado"]),
         ("Registro CAL/colegiatura", datos["colegiatura"]),
-        ("Fecha de elaboración", datetime.now().strftime("%d/%m/%Y")),
-        ("Código de verificación", codigo),
+        ("Fecha de elaboración", fecha_larga_es(datetime.now())),
     ]
     for etiqueta, valor in filas:
         fila = tabla.add_row()
-        fila.cells[0].text = etiqueta
-        fila.cells[0].paragraphs[0].runs[0].bold = True
-        fila.cells[1].text = valor
+        celda_izq = fila.cells[0]
+        celda_izq.text = etiqueta
+        celda_izq.paragraphs[0].runs[0].bold = True
+        celda_izq.paragraphs[0].runs[0].font.size = Pt(11)
+        celda_der = fila.cells[1]
+        celda_der.text = valor
+        celda_der.paragraphs[0].runs[0].font.size = Pt(11)
 
     doc.add_paragraph()
-    doc.add_paragraph(
+
+    intro = doc.add_paragraph()
+    intro.alignment = WD_ALIGN_PARAGRAPH.JUSTIFY
+    intro.add_run(
         f"{datos['demandante']}, con el patrocinio del abogado que suscribe, "
-        f"me presento ante su despacho y expongo lo siguiente:"
+        f"me presento ante su despacho y digo:"
     )
 
-    doc.add_heading("I. FUNDAMENTOS DE HECHO", level=2)
-    doc.add_paragraph(datos["hechos"] or "[Pendiente de completar]")
+    # --------- I. Fundamentos de hecho ---------
+    h1 = doc.add_paragraph()
+    h1.add_run("I. FUNDAMENTOS DE HECHO").bold = True
+    for i, parrafo in enumerate(
+        (datos["hechos"] or "[Pendiente de completar]").split("\n"), start=1
+    ):
+        if not parrafo.strip():
+            continue
+        pf = doc.add_paragraph()
+        pf.alignment = WD_ALIGN_PARAGRAPH.JUSTIFY
+        pf.add_run(f"{i}. {parrafo.strip()}")
 
-    doc.add_heading("II. PETITORIO / PRETENSIONES", level=2)
-    doc.add_paragraph(datos["pretensiones"] or "[Pendiente de completar]")
+    # --------- II. Fundamentos de derecho ---------
+    h2 = doc.add_paragraph()
+    h2.add_run("II. FUNDAMENTOS DE DERECHO").bold = True
+    texto_derecho = (datos.get("fundamentos_derecho") or "").strip()
+    if texto_derecho:
+        for i, parrafo in enumerate(texto_derecho.split("\n"), start=1):
+            if not parrafo.strip():
+                continue
+            pd = doc.add_paragraph()
+            pd.alignment = WD_ALIGN_PARAGRAPH.JUSTIFY
+            pd.add_run(f"{i}. {parrafo.strip()}")
+    else:
+        pd = doc.add_paragraph()
+        pd.alignment = WD_ALIGN_PARAGRAPH.JUSTIFY
+        pd.add_run("[Pendiente de completar — ingresa aquí la base legal aplicable a tu caso]")
 
-    doc.add_heading("III. ANEXOS", level=2)
-    doc.add_paragraph(
-        "Se adjuntan los medios probatorios que sustentan lo expuesto en el "
-        "presente escrito."
+    # --------- III. Petitorio ---------
+    h3 = doc.add_paragraph()
+    h3.add_run("III. PETITORIO").bold = True
+    for i, parrafo in enumerate(
+        (datos["pretensiones"] or "[Pendiente de completar]").split("\n"), start=1
+    ):
+        if not parrafo.strip():
+            continue
+        pp = doc.add_paragraph()
+        pp.alignment = WD_ALIGN_PARAGRAPH.JUSTIFY
+        pp.add_run(f"{i}. {parrafo.strip()}")
+
+    # --------- IV. Anexos ---------
+    h4 = doc.add_paragraph()
+    h4.add_run("IV. ANEXOS").bold = True
+    pa = doc.add_paragraph()
+    pa.alignment = WD_ALIGN_PARAGRAPH.JUSTIFY
+    pa.add_run(
+        "1-A. Se adjuntan los medios probatorios que sustentan lo expuesto "
+        "en el presente escrito."
+    )
+
+    # --------- Cierre ---------
+    doc.add_paragraph()
+    cierre = doc.add_paragraph()
+    cierre.alignment = WD_ALIGN_PARAGRAPH.JUSTIFY
+    cierre.add_run(
+        "POR LO EXPUESTO: solicito a su despacho tener por presentado el "
+        "presente escrito y proveer conforme a lo peticionado."
     )
 
     doc.add_paragraph()
-    doc.add_paragraph("POR LO EXPUESTO:")
-    doc.add_paragraph(
-        "Solicito a su despacho tener por presentado el presente escrito y "
-        "proveer conforme a lo peticionado."
-    )
+    fecha_p = doc.add_paragraph()
+    fecha_p.add_run(f"Lima, {fecha_larga_es(datetime.now())}.")
 
+    # --------- Firma ---------
     doc.add_paragraph()
-    doc.add_paragraph(f"Lima, {fecha_larga_es(datetime.now())}.")
-
     doc.add_paragraph()
     firma = doc.add_paragraph()
     firma.alignment = WD_ALIGN_PARAGRAPH.CENTER
     firma.add_run(
-        f"\n_______________________________\n"
+        f"_______________________________\n"
         f"{datos['abogado']}\n"
         f"Abogado — Reg. {datos['colegiatura']}"
     )
 
+    # --------- Pie de verificación con QR ---------
     doc.add_paragraph()
-    doc.add_picture(qr_buffer, width=Inches(1.1))
+    pie_regla = doc.add_paragraph()
+    pie_regla.alignment = WD_ALIGN_PARAGRAPH.CENTER
+    pie_regla.add_run("· " * 30).font.size = Pt(8)
+
+    qr_parrafo = doc.add_paragraph()
+    qr_parrafo.alignment = WD_ALIGN_PARAGRAPH.CENTER
+    qr_run = qr_parrafo.add_run()
+    qr_run.add_picture(qr_buffer, width=Inches(1.0))
+
     nota = doc.add_paragraph()
     nota.alignment = WD_ALIGN_PARAGRAPH.CENTER
     nota_run = nota.add_run(
-        f"Código de verificación interna: {codigo}\n"
+        f"Navarro & Ochoa Abogados · Código de verificación interna: {codigo}\n"
         f"Este código permite comprobar el origen del documento en el "
         f"registro del estudio. No constituye firma digital certificada."
     )
@@ -337,7 +470,12 @@ else:
         st.stop()
 
     st.title("🛡️ Navarro & Ochoa Abogados")
-    st.subheader("Sistema Interno de Redacción Judicial")
+    st.subheader("Formateador de Escritos y Documentos")
+    st.caption(
+        "Herramienta de forma, no de fondo: da estructura, numeración y "
+        "verificación a lo que tú redactas. No sustituye el criterio "
+        "profesional de un abogado."
+    )
 
     menu = st.sidebar.selectbox(
         "Menú", ["Nuevo Escrito", "Procesar OCR", "Validar Certificado", "Mis Casos"]
@@ -358,14 +496,20 @@ else:
             colegiatura = st.text_input("Colegiatura (Reg. CAL)")
 
         with col2:
-            hechos = st.text_area("Hechos", height=160)
-            pretensiones = st.text_area("Pretensiones", height=160)
+            hechos = st.text_area("Hechos", height=140)
+            fundamentos_derecho = st.text_area(
+                "Fundamentos de Derecho (redáctalos tú o pégalos aquí)",
+                height=100,
+                placeholder="Ej.: Artículo 200° de la Constitución Política del Perú; artículo 2° del Código Procesal Constitucional...",
+            )
+            pretensiones = st.text_area("Petitorio / Pretensiones", height=140)
 
         st.caption(
-            "El escrito incluirá un código QR de verificación interna del "
-            "estudio. Este control **no** equivale a una firma digital "
-            "certificada; el documento debe firmarse por los medios oficiales "
-            "antes de su presentación."
+            "Esta herramienta solo da formato al documento: la numeración, "
+            "los márgenes y el QR de verificación se generan automáticamente, "
+            "pero **todo el contenido legal (hechos, fundamentos de derecho y "
+            "petitorio) debe ser redactado por ti**. El sistema no analiza el "
+            "caso ni sugiere argumentos."
         )
 
         if st.button("Generar Escrito con QR de verificación"):
@@ -389,6 +533,7 @@ else:
                     "abogado": abogado,
                     "colegiatura": colegiatura,
                     "hechos": hechos,
+                    "fundamentos_derecho": fundamentos_derecho,
                     "pretensiones": pretensiones,
                 }
                 codigo = generar_codigo_verificacion(datos)
@@ -519,7 +664,7 @@ else:
                     else:
                         st.warning("El archivo original ya no está disponible en este equipo.")
 
-    st.sidebar.info("Sistema Interno - Navarro & Ochoa Abogados")
+    st.sidebar.info("Formateador de Documentos - Navarro & Ochoa Abogados")
     if st.sidebar.button("Cerrar sesión"):
         st.session_state.autenticado = False
         st.rerun()
