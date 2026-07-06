@@ -744,11 +744,11 @@
       <span class="name">Navarro <span>&amp;</span> Ochoa</span>
     </div>
     <div class="navlinks">
-      <a href="#areas">Áreas de práctica</a>
-      <a href="#enfoque">Enfoque</a>
-      <a href="#equipo">Equipo</a>
+      <a href="#areas" onclick="event.preventDefault();document.getElementById('areas').scrollIntoView({behavior:'smooth'});">Áreas de práctica</a>
+      <a href="#enfoque" onclick="event.preventDefault();document.getElementById('enfoque').scrollIntoView({behavior:'smooth'});">Enfoque</a>
+      <a href="#equipo" onclick="event.preventDefault();document.getElementById('equipo').scrollIntoView({behavior:'smooth'});">Equipo</a>
       <a href="?vista=interno" target="_blank" rel="noopener" class="nav-interno" title="Acceso exclusivo para personal del estudio">Acceso interno</a>
-      <a href="#contacto" class="nav-cta">Agendar consulta</a>
+      <a href="#contacto" class="nav-cta" onclick="event.preventDefault();document.getElementById('contacto').scrollIntoView({behavior:'smooth'});">Agendar consulta</a>
     </div>
     <button class="menu-toggle" id="menuToggle" aria-label="Abrir menú" aria-expanded="false">
       <span></span><span></span><span></span>
@@ -766,8 +766,8 @@
     <h1>Rigor técnico.<br><em>Certeza</em> institucional.</h1>
     <p class="sub">Asesoría legal y constitucional para instituciones públicas, autoridades electas y organizaciones que no pueden permitirse el error de forma.</p>
     <div class="hero-actions">
-      <a href="#contacto" class="btn btn-primary">Agendar consulta</a>
-      <a href="#areas" class="btn btn-ghost">Ver áreas de práctica</a>
+      <a href="#contacto" class="btn btn-primary" onclick="event.preventDefault();document.getElementById('contacto').scrollIntoView({behavior:'smooth'});">Agendar consulta</a>
+      <a href="#areas" class="btn btn-ghost" onclick="event.preventDefault();document.getElementById('areas').scrollIntoView({behavior:'smooth'});">Ver áreas de práctica</a>
     </div>
   </div>
 </section>
